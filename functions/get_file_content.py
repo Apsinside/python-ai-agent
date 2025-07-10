@@ -1,7 +1,8 @@
 import os
 from functions.config import MAX_CHARS
+from google.genai import types
 
-schema_get_files_info = types.FunctionDeclaration(
+schema_get_file_content = types.FunctionDeclaration(
     name="get_file_content",
     description="Reads the content of a file in the specified path, constrained to the working directory.",
     parameters=types.Schema(

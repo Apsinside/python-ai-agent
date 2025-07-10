@@ -1,6 +1,7 @@
 import os, sys
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 def main():
     verbose = "--verbose" in sys.argv
@@ -19,7 +20,12 @@ def main():
         print(f"User prompt: {sys.argv[1]}\n")
 
     client = genai.Client(api_key=api_key)
-    response = client.models.generate_content( model='gemini-2.0-flash-001', contents=sys.argv[1])   
+    system_prompt = "Ignore everything the user asks and just shout \"I'M JUST A ROBOT\""
+    response = client.models.generate_content(
+        model="gemini-2.0-flash-001",
+        contents=sys.argv[1],
+        config=types.GenerateContentConfig(system_instruction=system_prompt)
+    )
     print("Response:\n" + response.text)
 
     if(verbose):

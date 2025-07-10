@@ -5,7 +5,7 @@ from google.genai import types
 
 from call_function import available_functions, call_function
 from prompts import system_prompt
-
+from functions.get_files_info import get_files_info
 
 def main():
     verbose = "--verbose" in sys.argv
@@ -24,26 +24,42 @@ def main():
         print(f"User prompt: {sys.argv[1]}\n")
 
     client = genai.Client(api_key=api_key)
-    
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        contents=sys.argv[1],
-        config=types.GenerateContentConfig(
-            tools=[available_functions], system_instruction=system_prompt
+
+    messages = [
+        types.Content(
+            role="user",
+            parts=[types.Part(text=sys.argv[1])]
         )
-    )
+    ]
 
-    if(verbose):
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+    for i in range(0,20):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash-001",
+                contents=messages,
+                config=types.GenerateContentConfig(
+                    tools=[available_functions], system_instruction=system_prompt
+                )
+            )
 
-    if not response.function_calls:
-        return response.text
+            for candidate in response.candidates:
+                messages.append(candidate.content)
+            
+            if(verbose):
+                print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+                print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
-    for function_call_part in response.function_calls:
-        #print(function_call_part.name)
-        result = call_function(function_call_part, verbose)
-        print(result)
+            
+            if not response.function_calls:
+                print(response.text)
+                break
+
+            for function_call_part in response.function_calls:
+                result = call_function(function_call_part, verbose)
+                messages.append(result)
+
+        except Exception as e:
+            print (f"Error: {e}")
 
 
     

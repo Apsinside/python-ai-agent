@@ -1,6 +1,20 @@
 import os
 from functions.config import MAX_CHARS
 
+schema_get_files_info = types.FunctionDeclaration(
+    name="get_file_content",
+    description="Reads the content of a file in the specified path, constrained to the working directory.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to file to be read, relative to the working directory.",
+            ),
+        },
+    ),
+)
+
 def get_file_content(working_directory, file_path):
     try:
         abs_working_dir = os.path.abspath(working_directory)

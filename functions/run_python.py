@@ -1,6 +1,27 @@
 import os
 import subprocess
 
+schema_get_files_info = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Runs a the python file at the given file path with optional arguments, constrained to the working directory.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to python file to be run, relative to the working directory.",
+            ),
+        },
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to python file to be run, relative to the working directory.",
+            ),
+        },
+    ),
+)
+
 def run_python_file(working_directory, file_path, args=None):
     abs_working_dir = os.path.abspath(working_directory)
     target_file_path = os.path.join(working_directory, file_path)

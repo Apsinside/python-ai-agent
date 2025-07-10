@@ -1,4 +1,6 @@
 venv/
 .env
 uv.lock
-__pycache__
+__pycache__/
+functions/__pycache__/config.cpython-313.pyc
+functions/__pycache__/get_files_info.cpython-313.pyc
